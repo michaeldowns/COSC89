@@ -28,7 +28,7 @@ y = w[0] * T.sqr(X)  + w[1] * X + w[2]
 
 cost = T.mean(T.sqr(y - Y))
 gradient = T.grad(cost=cost, wrt=w)
-updates = [(w, w - a.get_value()*gradient), (a, a + .02)]
+updates = [(w, w - a.get_value()*gradient), (a, a + .05)]
 
 train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
 
