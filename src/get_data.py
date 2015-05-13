@@ -39,9 +39,9 @@ def load_data(display_image = -1):
         print filename + " exists, loading into variables..."
         f = gzip.open(filename, 'rb')
 
-        # each of these is a tuple consisting of a matrix
-        # where each row is a data point and a vector
-        # of the corresponding class label
+        # each of these is a tuple consisting of 1. a matrix
+        # where each row is a 784 dimensional data point and 2. a vector
+        # consisting of the corresponding class labels
         train_set, valid_set, test_set = cPickle.load(f)
         f.close()
 
@@ -81,6 +81,7 @@ def load_data(display_image = -1):
 
         rval = [(train_set_x, train_set_y), (valid_set_x, valid_set_y),
                 (test_set_x, test_set_y)]
+        
         return rval
     
     
