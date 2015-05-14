@@ -24,10 +24,12 @@ import matplotlib.animation as animation
 # NETWORK PARAMETERS #
 ######################
 MODEL = [784, 100, 10]
+ACTIVATION = "tanh" # options are "tanh", and "sigmoid"
+COST = "entropy" # options are "likelihood", and "entropy"
 BATCH_SIZE = 20
 LEARN_RATE = 0.01
-EPOCHS = 100
-WEIGHT_DECAY = .0001
+EPOCHS = 1000
+WEIGHT_DECAY = 0.0001
 SEED = 1234 # used to initialize weights
 
 
@@ -58,9 +60,9 @@ index = T.lscalar()
 x = T.matrix('x') # data matrix
 y = T.ivector('y') # class labels 
                    
-nn = neuralnet.NeuralNetwork(x, MODEL, rng)
+nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION, COST)
 
-cost = nn.negative_log_likelihood(y) + WEIGHT_DECAY/2 * nn.L2
+cost = nn.cost_function(y) + WEIGHT_DECAY/2 * nn.L2
 
 # function that returns error on validation set
 test_model = theano.function(
@@ -151,9 +153,9 @@ W *= 1.0/(W.max() + 1e-8)
 
 # get output matrix
 k = 0
-out = np.zeros((28*10, 28*10))
-for i in range(10):
-    for j in range(10):
+out = np.zeros((28*6, 28*5))
+for i in range(6):
+    for j in range(5):
         w = np.reshape(W[k], (28, 28))
         out[i*28:(i+1)*28, j*28:(j+1)*28] = w
         k += 1
