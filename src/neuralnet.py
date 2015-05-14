@@ -53,16 +53,20 @@ class NeuralNetwork(object):
         # symbolic matrix of class membership probabilities where the number
         # of rows is the number of samples and the number of columns is the
         # number of classes
-        for i in range(len(layers) - 1):
-            if i == 0:
-                self.p_y_given_x = activation(T.dot(input,
+        if len(layers) == 2:
+            self.p_y_given_x = T.nnet.softmax(T.dot(input,
                                                     self.W[0]) + self.b[0])
-            elif i == len(layers) - 2:
-                self.p_y_given_x = T.nnet.softmax(T.dot(self.p_y_given_x,
+        elif len(layers) > 2:
+            for i in range(len(layers) - 1):
+                if i == 0:
+                    self.p_y_given_x = activation(T.dot(input,
+                                                        self.W[0]) + self.b[0])
+                elif i == len(layers) - 2:
+                    self.p_y_given_x = T.nnet.softmax(T.dot(self.p_y_given_x,
                                                         self.W[i]) + self.b[i])
-            else:
-                self.p_y_given_x = activation(T.dot(self.p_y_given_x,
-                                                    self.W[i]) + self.b[i])
+                else:
+                    self.p_y_given_x = activation(T.dot(self.p_y_given_x,
+                                                        self.W[i]) + self.b[i])
 
         # class predictions
         self.y_pred = T.argmax(self.p_y_given_x, axis=1)
@@ -78,6 +82,10 @@ class NeuralNetwork(object):
     def negative_log_likelihood(self, y):
         return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
 
+    # cross entropy cost function
+    def cross_entropy(self, y):
+        return T.nnet.categorical_crossentropy(self.p_y_given_x, y)
+    
     # returns the percentage of incorrect predictions for the batch
     def errors(self, y):
         return T.mean(T.neq(self.y_pred, y))

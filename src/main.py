@@ -15,14 +15,19 @@ import theano.tensor as T
 from get_data import *
 import neuralnet
 
+import cPickle
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import matplotlib.animation as animation
+
 ######################
 # NETWORK PARAMETERS #
 ######################
-MODEL = [784, 500, 10]
+MODEL = [784, 10]
 BATCH_SIZE = 20
 LEARN_RATE = 0.01
-EPOCHS = 1000
-WEIGHT_DECAY = .0001
+EPOCHS = 50
+WEIGHT_DECAY = 0.0001
 SEED = 1234 # used to initialize weights
 
 
@@ -106,10 +111,20 @@ start_time = time.clock()
 
 indices = range(n_train_batches)
 
+fig = plt.figure()
+frames = []
+
 for epoch in range(EPOCHS):
     print "Epoch " + str(epoch)
     print "Validation error at start of epoch:"
     print str(validate_model()*100) + "%"
+
+    w = nn.W[0][:, 1].eval()
+    w = np.transpose(w)
+    w = np.reshape(w, (28, 28))
+    
+    im = plt.imshow(w, cmap=cm.Greys_r)
+    frames.append([im])
     
     # shuffle the indices
     rng.shuffle(indices)
@@ -117,6 +132,9 @@ for epoch in range(EPOCHS):
     for i in indices:
         train_model(i)
 
+ani = animation.ArtistAnimation(fig, frames, interval=100, repeat_delay=5000)
+plt.show()
+        
 end_time = time.clock()
 
 print "Final test set error: "
