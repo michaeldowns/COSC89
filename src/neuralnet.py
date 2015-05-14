@@ -55,6 +55,8 @@ class NeuralNetwork(object):
             activation = T.nnet.sigmoid
         elif activation == "tanh":
             activation = T.tanh
+        elif activation == "softplus":
+            activation = T.nnet.softplus
         else:
             print "Invalid activation, using tanh"
             activation = T.tanh
