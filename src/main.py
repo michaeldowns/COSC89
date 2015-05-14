@@ -23,11 +23,11 @@ import matplotlib.animation as animation
 ######################
 # NETWORK PARAMETERS #
 ######################
-MODEL = [784, 10]
+MODEL = [784, 100, 10]
 BATCH_SIZE = 20
 LEARN_RATE = 0.01
-EPOCHS = 50
-WEIGHT_DECAY = 0.0001
+EPOCHS = 100
+WEIGHT_DECAY = .0001
 SEED = 1234 # used to initialize weights
 
 
@@ -96,8 +96,8 @@ train_model = theano.function(
     outputs=cost,
     updates=updates,
     givens={
-        x: train_x[index * BATCH_SIZE : (index + 1) * BATCH_SIZE - 1],
-        y: train_y[index * BATCH_SIZE : (index + 1) * BATCH_SIZE - 1]
+        x: train_x[index * BATCH_SIZE : (index + 1) * BATCH_SIZE],
+        y: train_y[index * BATCH_SIZE : (index + 1) * BATCH_SIZE]
     }
 )
 
@@ -111,20 +111,20 @@ start_time = time.clock()
 
 indices = range(n_train_batches)
 
-fig = plt.figure()
-frames = []
+# fig = plt.figure()
+# frames = []
 
 for epoch in range(EPOCHS):
     print "Epoch " + str(epoch)
     print "Validation error at start of epoch:"
     print str(validate_model()*100) + "%"
 
-    w = nn.W[0][:, 1].eval()
-    w = np.transpose(w)
-    w = np.reshape(w, (28, 28))
+   # w = nn.W[0][:, 0].eval()
+   # w = np.transpose(w)
+   # w = np.reshape(w, (28, 28))
     
-    im = plt.imshow(w, cmap=cm.Greys_r)
-    frames.append([im])
+   # im = plt.imshow(w, cmap=cm.Greys_r)
+   # frames.append([im])
     
     # shuffle the indices
     rng.shuffle(indices)
@@ -132,8 +132,8 @@ for epoch in range(EPOCHS):
     for i in indices:
         train_model(i)
 
-ani = animation.ArtistAnimation(fig, frames, interval=100, repeat_delay=5000)
-plt.show()
+# ani = animation.ArtistAnimation(fig, frames, interval=100, repeat_delay=5000)
+# plt.show()
         
 end_time = time.clock()
 
@@ -141,7 +141,27 @@ print "Final test set error: "
 print str(test_model()*100) + "%"
 
 print "Ran for " + str((end_time - start_time)/60) + " minutes"
-    
+
+# plot resulting learned weights for first layer
+W = np.transpose(nn.W[0].get_value(borrow=True))
+
+# scale all values to be between 0 and 1
+W -= W.min()
+W *= 1.0/(W.max() + 1e-8)
+
+# get output matrix
+k = 0
+out = np.zeros((28*10, 28*10))
+for i in range(10):
+    for j in range(10):
+        w = np.reshape(W[k], (28, 28))
+        out[i*28:(i+1)*28, j*28:(j+1)*28] = w
+        k += 1
+
+plt.imshow(out, cmap=cm.Greys_r)
+plt.show()
+
+
 
 
     
