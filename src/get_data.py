@@ -1,4 +1,4 @@
-# Provides functionality for 1. downloading the mnist data set if it not in
+# Provides functionality for 1. downloading the mnist data set if is not in
 # the current directory and 2. unzipping, unpickling, preprocessing, and
 # storing the data in numpy array variables for later use. Various code
 # snippets taken from http://deeplearning.net/tutorial/logreg.html

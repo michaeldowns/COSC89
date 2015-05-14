@@ -96,6 +96,7 @@ train_model = theano.function(
     }
 )
 
+
 ###############
 # TRAIN MODEL #
 ###############
