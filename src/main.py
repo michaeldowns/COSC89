@@ -1,3 +1,6 @@
+# Main script for experiments
+# Code snippets taken from http://deeplearning.net/tutorial
+
 ###########
 # IMPORTS #
 ###########
