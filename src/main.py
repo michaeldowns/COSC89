@@ -20,27 +20,28 @@ import visualization as viz
 ######################
 # NETWORK PARAMETERS #
 ######################
-MODEL = [784, 100, 10]
+MODEL = [784, 1000, 500, 250, 30, 10]
 ACTIVATION = "relu" # options are "tanh", "softplus", "relu", and "sigmoid"
-COST = "entropy" # options are "likelihood" and "entropy"
+COST = "entropy" # options are "likelihocod" and "entropy"
 BATCH_SIZE = 20
 LEARN_RATE = 0.01
-EPOCHS = 100
-WEIGHT_DECAY = 0.0001
-MOMENTUM = .3
+EPOCHS = 50
+WEIGHT_DECAY = 0
+MOMENTUM = .2
 SEED = 1234 # used to initialize weights
+TOL = 0.0001
 
 VISUALIZE_WEIGHTS = True
 
 ANIMATE_WEIGHTS = True
 IMAGE_DIM = 28
-TILE_X = 10
-TILE_Y = 10
+TILE_X = 20
+TILE_Y = 50
 ANIMATION_INTERVAL = 100
 
 ################
 # EXTRACT DATA #
-###############
+################
 print "Handling data..."
 
 download_data()
@@ -64,7 +65,6 @@ rng = numpy.random.RandomState(SEED)
 index = T.lscalar()
 x = T.matrix('x') # data matrix
 y = T.ivector('y') # class labels 
-learn_rate = T.dscalar()
 
 nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION, COST)
 
@@ -139,8 +139,9 @@ indices = range(n_train_batches)
 
 frames = []
 fig = plt.figure()
+diff = 0
 for epoch in range(EPOCHS):
-    print "Validation error at start of epoch " + str(epoch) + ":",
+    print "Validation error at start of epoch " + str(epoch+1) + ":",
     print str(validate_model()*100) + "%"
     
     # shuffle the indices
