@@ -22,7 +22,7 @@ import visualization as viz
 ######################
 MODEL = [784, 1000, 500, 250, 30, 10]
 ACTIVATION = "relu" # options are "tanh", "softplus", "relu", and "sigmoid"
-COST = "entropy" # options are "likelihocod" and "entropy"
+COST = "entropy" # options are "likelihood" and "entropy"
 BATCH_SIZE = 20
 LEARN_RATE = 0.01
 EPOCHS = 50
