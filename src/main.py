@@ -15,23 +15,28 @@ import theano.tensor as T
 from get_data import *
 import neuralnet
 
-import cPickle
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import matplotlib.animation as animation
+import visualization as viz
 
 ######################
 # NETWORK PARAMETERS #
 ######################
 MODEL = [784, 100, 10]
-ACTIVATION = "tanh" # options are "tanh", "softplus", and "sigmoid"
-COST = "entropy" # options are "likelihood", and "entropy"
+ACTIVATION = "relu" # options are "tanh", "softplus", "relu", and "sigmoid"
+COST = "entropy" # options are "likelihood" and "entropy"
 BATCH_SIZE = 20
 LEARN_RATE = 0.01
-EPOCHS = 50
+EPOCHS = 100
 WEIGHT_DECAY = 0.0001
+MOMENTUM = .3
 SEED = 1234 # used to initialize weights
 
+VISUALIZE_WEIGHTS = True
+
+ANIMATE_WEIGHTS = True
+IMAGE_DIM = 28
+TILE_X = 10
+TILE_Y = 10
+ANIMATION_INTERVAL = 100
 
 ################
 # EXTRACT DATA #
@@ -59,7 +64,8 @@ rng = numpy.random.RandomState(SEED)
 index = T.lscalar()
 x = T.matrix('x') # data matrix
 y = T.ivector('y') # class labels 
-                   
+learn_rate = T.dscalar()
+
 nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION, COST)
 
 cost = nn.cost_function(y) + WEIGHT_DECAY/2 * nn.L2
@@ -87,9 +93,22 @@ validate_model = theano.function(
 # determine the gradient and updates for each parameter
 gparams = [T.grad(cost, param) for param in nn.params]
 
+# Initialize velocities for momentum updates
+V = []
+for param in nn.params:
+    v_values = np.zeros(tuple(param.shape.eval()), dtype=theano.config.floatX)
+    v = theano.shared(value=v_values, borrow=True)
+    V.append(v)
+    
+
 updates = [
-    (param, param - LEARN_RATE * gparam)
-    for param, gparam in zip(nn.params, gparams)
+    (v, MOMENTUM*v - LEARN_RATE*gparam)
+    for v, gparam in zip(V, gparams)
+]
+
+m_updates = [
+    (param, param + v)
+    for param, v in zip(nn.params, V)
 ]
 
 # actual function that performs the updates
@@ -103,6 +122,11 @@ train_model = theano.function(
     }
 )
 
+momentum_updates = theano.function(
+    inputs=[],
+    outputs=[],
+    updates=m_updates
+)
 
 ###############
 # TRAIN MODEL #
@@ -113,6 +137,8 @@ start_time = time.clock()
 
 indices = range(n_train_batches)
 
+frames = []
+fig = plt.figure()
 for epoch in range(EPOCHS):
     print "Validation error at start of epoch " + str(epoch) + ":",
     print str(validate_model()*100) + "%"
@@ -122,32 +148,31 @@ for epoch in range(EPOCHS):
 
     for i in indices:
         train_model(i)
+        momentum_updates()
         
+    if VISUALIZE_WEIGHTS and ANIMATE_WEIGHTS:
+        W = np.transpose(nn.W[0].get_value(borrow=False))
+        tiling = viz.tile_image(W, IMAGE_DIM, TILE_X, TILE_Y)
+        im = plt.imshow(tiling, cmap=cm.Greys_r)
+        frames.append([im])
+
 end_time = time.clock()
 
-print "Final test set error: ",
+print "Final test set error:",
 print str(test_model()*100) + "%"
 
 print "Ran for " + str((end_time - start_time)/60) + " minutes"
 
-# plot resulting learned weights for first layer
-W = np.transpose(nn.W[0].get_value(borrow=True))
+#####################
+# VISUALIZE RESULTS #
+#####################
 
-# scale all values to be between 0 and 1
-W -= W.min()
-W *= 1.0/(W.max() + 1e-8)
+if VISUALIZE_WEIGHTS:
+    # plot resulting learned weights for first layer
+    W = np.transpose(nn.W[0].get_value(borrow=False))
 
-# get output matrix
-k = 0
-out = np.zeros((28*10, 28*10))
-for i in range(10):
-    for j in range(10):
-        w = np.reshape(W[k], (28, 28))
-        out[i*28:(i+1)*28, j*28:(j+1)*28] = w
-        k += 1
-
-plt.imshow(out, cmap=cm.Greys_r)
-plt.show()
+    viz.visualize_weights(W, IMAGE_DIM, TILE_X, TILE_Y,
+                          EPOCHS, ANIMATION_INTERVAL, fig, frames)
 
 
 

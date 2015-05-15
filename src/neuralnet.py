@@ -57,6 +57,8 @@ class NeuralNetwork(object):
             activation = T.tanh
         elif activation == "softplus":
             activation = T.nnet.softplus
+        elif activation == "relu":
+            activation = lambda x: T.switch(x<0, 0, x)
         else:
             print "Invalid activation, using tanh"
             activation = T.tanh
@@ -83,6 +85,11 @@ class NeuralNetwork(object):
         # class predictions
         self.y_pred = T.argmax(self.p_y_given_x, axis=1)
 
+        # sum of absolute values of weights
+        self.L1 = 0
+        for weight in self.W:
+            self.L1 += abs(weight).sum()
+        
         # squared sum of weights
         self.L2 = 0
         for weight in self.W:
