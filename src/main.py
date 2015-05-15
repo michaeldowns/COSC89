@@ -29,7 +29,7 @@ EPOCHS = 50
 WEIGHT_DECAY = 0
 MOMENTUM = .2
 SEED = 1234 # used to initialize weights
-TOL = 0.0001
+TOL = 0.001
 
 VISUALIZE_WEIGHTS = True
 
