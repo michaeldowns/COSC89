@@ -15,8 +15,7 @@ class NeuralNetwork(object):
     activation: The nonlinearity applied to each layer
     cost: Which cost function to use
     """
-    def __init__(self, input, layers, rng, activation = "tanh",
-                 cost = "likelihood"):
+    def __init__(self, input, layers, rng, activation = "relu"):
         # Initialize network parameters
         # The convention is that each column in a weight matrix
         # represents connections into one node in the output layer
@@ -95,17 +94,11 @@ class NeuralNetwork(object):
         for weight in self.W:
             self.L2 += (weight ** 2).sum()
 
-        self.cost = cost
 
-    # learning objective
+    # learning objective is minimizing the negative log likelihood
+    # which is the same as the categorical cross entropy
     def cost_function(self, y):
-        if self.cost == "likelihood":
-            return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
-        elif self.cost == "entropy":
-            return T.nnet.categorical_crossentropy(self.p_y_given_x, y).sum()
-        else:
-            print "Invalid cost function, using likelihood"
-            return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
+        return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
     
     # returns the percentage of incorrect predictions for the batch
     def errors(self, y):

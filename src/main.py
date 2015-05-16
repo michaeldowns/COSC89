@@ -20,14 +20,13 @@ import visualization as viz
 ######################
 # NETWORK PARAMETERS #
 ######################
-MODEL = [784, 1000, 500, 250, 30, 10]
+MODEL = [784, 100, 10]
 ACTIVATION = "relu" # options are "tanh", "softplus", "relu", and "sigmoid"
-COST = "entropy" # options are "likelihood" and "entropy"
 BATCH_SIZE = 20
-LEARN_RATE = 0.01
+LEARN_RATE = 0.01*20
 EPOCHS = 50
-WEIGHT_DECAY = 0
-MOMENTUM = .2
+WEIGHT_DECAY = 0.0001
+MOMENTUM = 0.2
 SEED = 1234 # used to initialize weights
 TOL = 0.001
 
@@ -35,8 +34,8 @@ VISUALIZE_WEIGHTS = True
 
 ANIMATE_WEIGHTS = True
 IMAGE_DIM = 28
-TILE_X = 20
-TILE_Y = 50
+TILE_X = 10
+TILE_Y = 10
 ANIMATION_INTERVAL = 100
 
 ################
@@ -66,7 +65,7 @@ index = T.lscalar()
 x = T.matrix('x') # data matrix
 y = T.ivector('y') # class labels 
 
-nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION, COST)
+nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION)
 
 cost = nn.cost_function(y) + WEIGHT_DECAY/2 * nn.L2
 

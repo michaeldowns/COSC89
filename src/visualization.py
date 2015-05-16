@@ -16,9 +16,9 @@ def tile_image(W, image_dim, tile_x, tile_y):
     W *= 1.0/(W.max() + 1e-8)
     
     k = 0
-    tiling = np.zeros((image_dim*tile_x, image_dim*tile_y))
-    for i in range(tile_x):
-        for j in range(tile_y):
+    tiling = np.zeros((image_dim*tile_y, image_dim*tile_x))
+    for i in range(tile_y):
+        for j in range(tile_x):
             w = np.reshape(W[k], (image_dim, image_dim))
             tiling[i*image_dim:(i+1)*image_dim, j*image_dim:(j+1)*image_dim] = w
             k += 1
@@ -33,6 +33,7 @@ def visualize_weights(W, image_dim, tile_x, tile_y, epochs, interval,
     if len(frames) > 0:
         ani = animation.ArtistAnimation(fig, frames, interval=interval,
                                         repeat_delay=interval*epochs)
+
     else:
         # get output matrix
         tiling = tile_image(W, image_dim, tile_x, tile_y)
