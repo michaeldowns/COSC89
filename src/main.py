@@ -20,13 +20,13 @@ import visualization as viz
 ######################
 # NETWORK PARAMETERS #
 ######################
-MODEL = [784, 100, 10]
+MODEL = [784, 30, 10]
 ACTIVATION = "relu" # options are "tanh", "softplus", "relu", and "sigmoid"
 BATCH_SIZE = 20
-LEARN_RATE = 0.01*20
+LEARN_RATE = 0.2
 EPOCHS = 50
 WEIGHT_DECAY = 0.0001
-MOMENTUM = 0.2
+MOMENTUM = 0.5
 SEED = 1234 # used to initialize weights
 TOL = 0.001
 
@@ -34,8 +34,8 @@ VISUALIZE_WEIGHTS = True
 
 ANIMATE_WEIGHTS = True
 IMAGE_DIM = 28
-TILE_X = 10
-TILE_Y = 10
+TILE_X = 6
+TILE_Y = 5
 ANIMATION_INTERVAL = 100
 
 ################
@@ -51,8 +51,6 @@ valid_x, valid_y = data[1]
 test_x, test_y = data[2]
 
 n_train_batches = train_x.get_value(borrow=True).shape[0] / BATCH_SIZE
-n_valid_batches = valid_x.get_value(borrow=True).shape[0] / BATCH_SIZE
-n_test_batches = test_x.get_value(borrow=True).shape[0] / BATCH_SIZE
 
 ###################
 # CONSTRUCT MODEL #

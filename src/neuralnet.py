@@ -7,6 +7,22 @@ import numpy.random
 import theano
 import theano.tensor as T
 
+def get_activation(activation):
+    res = T.tanh
+    
+    if activation == "sigmoid":
+        res = T.nnet.sigmoid
+    elif activation == "tanh":
+        res = T.tanh
+    elif activation == "softplus":
+        res = T.nnet.softplus
+    elif activation == "relu":
+        res = lambda x: T.switch(x<0, 0, x)
+    else:
+        print "Invalid activation, using tanh"
+
+    return res
+
 class NeuralNetwork(object):
     """
     input: Data matrix where rows are samples
@@ -33,7 +49,7 @@ class NeuralNetwork(object):
                 ),
                 dtype=theano.config.floatX
             )
-            if activation == theano.tensor.nnet.sigmoid:
+            if activation == "sigmoid":
                 W_values *= 4
                 
             b_values = np.zeros((layers[i+1],), dtype=theano.config.floatX)
@@ -49,19 +65,7 @@ class NeuralNetwork(object):
             self.params.append(W)
             self.params.append(b)
 
-
-        if activation == "sigmoid":
-            activation = T.nnet.sigmoid
-        elif activation == "tanh":
-            activation = T.tanh
-        elif activation == "softplus":
-            activation = T.nnet.softplus
-        elif activation == "relu":
-            activation = lambda x: T.switch(x<0, 0, x)
-        else:
-            print "Invalid activation, using tanh"
-            activation = T.tanh
-        
+        activation = get_activation(activation)
 
         # symbolic matrix of class membership probabilities where the number
         # of rows is the number of samples and the number of columns is the
@@ -98,7 +102,7 @@ class NeuralNetwork(object):
     # learning objective is minimizing the negative log likelihood
     # which is the same as the categorical cross entropy
     def cost_function(self, y):
-        return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
+        return T.mean(T.nnet.categorical_crossentropy(self.p_y_given_x, y))
     
     # returns the percentage of incorrect predictions for the batch
     def errors(self, y):
