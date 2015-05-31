@@ -245,7 +245,7 @@ if __name__ == '__main__':
     BATCH_SIZE = 20
     LEARN_RATE = 0.5
     EPOCHS = 15
-    ALPHA = 1
+    ALPHA = 40
     SEED = 1234
     
     ################

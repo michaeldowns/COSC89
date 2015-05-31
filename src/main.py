@@ -20,14 +20,22 @@ import visualization as viz
 ######################
 # NETWORK PARAMETERS #
 ######################
-MODEL = [784, 100, 10]
-ACTIVATION = "relu" # options are "tanh", "softplus", "relu", and "sigmoid"
+MODEL = [784, 100, 50, 10]
+ACTIVATION = "sigmoid" # options are "tanh", "softplus", "relu", and "sigmoid"
 BATCH_SIZE = 20
 LEARN_RATE = 0.2
 EPOCHS = 50
 WEIGHT_DECAY = 0.0001
 MOMENTUM = 0
 SEED = 1234 # used to initialize weights
+
+AE_BATCH_SIZE = 20
+AE_LEARN_RATE = 0.1
+AE_EPOCHS = 15
+AE_TIED = True
+AE_TYPE_PARAMS = []
+AE_ACTIVATION = "sigmoid"
+AE_COST = "entropy"
 
 VISUALIZE_WEIGHTS = True
 
@@ -62,7 +70,22 @@ index = T.lscalar()
 x = T.matrix('x') # data matrix
 y = T.ivector('y') # class labels 
 
-nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION)
+autoencoder_data = [train_x,
+                    AE_BATCH_SIZE,
+                    AE_LEARN_RATE,
+                    AE_EPOCHS,
+                    AE_TIED,
+                    AE_TYPE_PARAMS,
+                    AE_ACTIVATION,
+                    AE_COST,
+                    valid_x,
+                    test_x,
+                    train_y,
+                    valid_y,
+                    test_y
+                ]
+
+nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION, "normal", autoencoder_data)
 
 cost = nn.cost_function(y) + WEIGHT_DECAY/2 * nn.L2
 
@@ -105,7 +128,7 @@ updates = [
 m_updates = [
     (param, param + v)
     for param, v in zip(nn.params, V)
-]
+]o
 
 # actual function that performs the updates
 train_model = theano.function(
