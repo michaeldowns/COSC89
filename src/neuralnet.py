@@ -56,19 +56,20 @@ class NeuralNetwork(object):
                 )
                 if activation == "sigmoid":
                     W_values *= 4
-                    
-            b_values = np.zeros((layers[i+1],), dtype=theano.config.floatX)
+
+
+                b_values = np.zeros((layers[i+1],), dtype=theano.config.floatX)
             
-            W = theano.shared(value=W_values, name='W_{0}{1}'.format(i+1, i+2),
+                W = theano.shared(value=W_values, name='W_{0}{1}'.format(i+1, i+2),
                               borrow=True)
-            b = theano.shared(value=b_values, name='b_{0}'.format(i+2),
+                b = theano.shared(value=b_values, name='b_{0}'.format(i+2),
                               borrow=True)
 
-            self.W.append(W)
-            self.b.append(b)
+                self.W.append(W)
+                self.b.append(b)
 
-            self.params.append(W)
-            self.params.append(b)
+                self.params.append(W)
+                self.params.append(b)
         else:
             # we'll assume that the network has at least two layers
             train_x = autoencoder_data[0]

@@ -36,6 +36,7 @@ AE_TIED = True
 AE_TYPE_PARAMS = []
 AE_ACTIVATION = "sigmoid"
 AE_COST = "entropy"
+AUTOENCODER_TYPE = "none"
 
 VISUALIZE_WEIGHTS = True
 
@@ -85,7 +86,7 @@ autoencoder_data = [train_x,
                     test_y
                 ]
 
-nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION, "normal", autoencoder_data)
+nn = neuralnet.NeuralNetwork(x, MODEL, rng, ACTIVATION, AUTOENCODER_TYPE, autoencoder_data)
 
 cost = nn.cost_function(y) + WEIGHT_DECAY/2 * nn.L2
 
@@ -128,7 +129,7 @@ updates = [
 m_updates = [
     (param, param + v)
     for param, v in zip(nn.params, V)
-]o
+]
 
 # actual function that performs the updates
 train_model = theano.function(
