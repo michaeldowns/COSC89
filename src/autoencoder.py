@@ -5,11 +5,14 @@ import numpy.random
 
 import theano
 import theano.tensor as T
+from theano.tensor.shared_randomstreams import RandomStreams
 
 import visualization as viz
 
 from get_data import *
 
+# Given a numpy rng, dimensions, and an appropriate activation function,
+# returns a symbolic theano shared variable matrix 
 def initialize_weights(rng, input_dim, hidden_dim, activation):
     bound = np.sqrt(6. / (input_dim + hidden_dim))
     W_values = np.asarray(
@@ -54,33 +57,45 @@ class Autoencoder(object):
     """
     input: A symbolic variable, should be a data matrix
     hidden_dim: Number of nodes in the hidden layer
-    ae_type: One of normal, sparse, denoising, contractive, or restrictive
+    ae_type: One of normal, denoising, contractive, or restrictive
     type_params: The parameters specific to a particular type of autoencoder
         normal: []
-        sparse: []
         denoising: [corruption_level]
+        contractive: [contraction_level]
+        restrictive: [alpha, which_params]
+           which_params is 1, 2, or 3: 1 uses only U, 2 uses only V, 3 uses both
     activation: The activation function used in the network, one of tanh, 
     sigmoid, softplus, or relu
     cost: one of entropy or quadratic
     """
-    def __init__(self, input, input_dim, hidden_dim, rng, tied=False,
+    def __init__(self, input, input_dim, hidden_dim, rng, tied=True,
                  ae_type="normal", type_params=[], activation = "sigmoid",
                  cost = "entropy"):
 
         activation = get_activation(activation)
-
+        self.activation = activation
+        
         self.input = input
         self.cost = cost
-
+        self.rng = rng
+        
         self.type_params = type_params
         
         self.W = []
         self.b = []
         self.params = []
-                
+        
+        self.ae_type = ae_type
+        self.type_params = type_params
+
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+
+        self.batchsize = input.shape[0]
+        
         # initialize the network weights. these will be initialized the same way
         # as long as the type is not restrictive
-        if ae_type in ["normal", "sparse", "denoising", "contractive"]:
+        if ae_type in ["normal", "denoising", "contractive"]:
             # initialize weights connecting layers 1 and 2
             W_12 = initialize_weights(rng, input_dim, hidden_dim, activation)
             self.W.append(W_12)
@@ -109,50 +124,129 @@ class Autoencoder(object):
             self.params.append(b_3)
 
         elif ae_type == "restrictive":
-            print "not yet coded"
+            alpha = hidden_dim/2
+            if len(type_params) > 0:
+                alpha = type_params[0]
+                
+            # initialize v, which has dimensions alpha x hidden_dim
+            bound = np.sqrt(6. / (input_dim + hidden_dim))
+            V_values = np.asarray(
+                rng.uniform(
+                    low=-bound,
+                    high=bound,
+                    size=(alpha, hidden_dim)
+                ),
+                dtype=theano.config.floatX
+            )
+            if activation == "sigmoid":
+                V_values *= 4
+
+            V = theano.shared(value=V_values, borrow=True)
+            if type_params[1] == 2 or type_params[1] == 3:
+                self.params.append(V)
+            
+            U_values = np.asarray(
+                rng.uniform(
+                    low=-bound,
+                    high=bound,
+                    size=(input_dim, alpha)
+                ),
+                dtype=theano.config.floatX
+            )
+            if activation == "sigmoid":
+                U_values *= 4
+
+            U = theano.shared(value=U_values, borrow=True)
+            if type_params[1] == 1 or type_params[1] == 3:
+                self.params.append(U)
+            
+            # multiply them to get W_12
+            W_12 = T.dot(U, V)
+            self.W.append(W_12)
+
+            b_2 = initialize_bias(hidden_dim)
+            self.b.append(b_2)
+            self.params.append(b_2)
+
+            W_23 = W_12.T
+            self.W.append(W_23)
+            
+            # initialize bias in layer 3
+            b_3 = initialize_bias(input_dim)
+            self.b.append(b_3)
+            self.params.append(b_3)
+
+            
 
         if not tied:
             self.L2 = (self.W[0]**2).sum() + (self.W[1]**2).sum()
         else:
             self.L2 = (self.W[0]).sum()
 
-        # if type is denoising then corrupt inputs
-        if ae_type == "denoising":
-            corruption_level = 0.2
-            if len(type_params) > 0:
-                corruption_level = type_params[0]
+    def corrupt(self, input):
+        corruption_level = 0.2
+        if len(self.type_params) > 0:
+            corruption_level = self.type_params[0]
 
-            mask = rng.binomial(n=1, p=1- corruption_level, size=(20, 784))
-            input = input * mask
-            
-        # output for normal autoencoder
-        a = activation(T.dot(input, self.W[0]) + self.b[0])
-        self.output = activation(T.dot(a, self.W[1]) + self.b[1])
+        # set up theano rng
+        theano_rng = RandomStreams(rng.randint(2 ** 30))
+
+        # corrupt inputs
+        mask = theano_rng.binomial(size=input.shape, n=1,
+                                   p=1 - corruption_level,
+                                   dtype=theano.config.floatX)
+
+        return mask * input
         
-        if ae_type == "sparse":
-            print "not yet coded"
-        elif ae_type == "contractive":
-            print "not yet coded"
-        elif ae_type == "restrictive":
-            print "not yet coded"
-        elif ae_type != "normal":
-            print "invalid autoencoder type, using normal"
 
-    def cost_function(self):
-        cost = T.mean(T.nnet.binary_crossentropy(self.output, self.input))
+    # code snippet taken from deep learning tutorial
+    def get_jacobian(self, hidden, W):
+        """Computes the jacobian of the hidden layer with respect to
+        the input, reshapes are necessary for broadcasting the
+        element-wise product on the right axis
+        """
+        return T.reshape(hidden * (1 - hidden),
+                         (self.batchsize, 1, self.hidden_dim)) * T.reshape(
+                             W, (1, self.input_dim, self.hidden_dim))
+    
+    def cost_function(self, corrupt_inputs = False):
+        if corrupt_inputs and self.ae_type == "denoising":
+            input = self.corrupt(self.input)
+        else:
+            input = self.input
+            
+        # get output
+        h = self.activation(T.dot(input, self.W[0]) + self.b[0])
+        output = self.activation(T.dot(h, self.W[1]) + self.b[1])
+
+        cost = T.mean(T.nnet.binary_crossentropy(output, self.input))
 
         if self.cost == "quadratic":
-            cost = T.mean((self.output-self.input)**2)
+            cost = T.mean((output-self.input)**2)
         elif self.cost != "entropy":
             print "Invalid cost, using entropy"
 
+        # add contractive cost if type is contractive
+        if self.ae_type == "contractive":
+            J = self.get_jacobian(h, self.W[0])
+            J = T.sum(J ** 2) / 20
+
+            contraction_level = 0.1
+            if len(self.type_params) > 0:
+                contraction_level = self.type_params[0]
+            
+            cost += contraction_level * T.mean(J)
+            
+        
         return cost
             
 
 if __name__ == '__main__':
     BATCH_SIZE = 20
-    LEARN_RATE = 0.1
+    LEARN_RATE = 0.5
     EPOCHS = 15
+    ALPHA = 1
+    SEED = 1234
     
     ################
     # EXTRACT DATA #
@@ -173,7 +267,7 @@ if __name__ == '__main__':
     ###################
     print "Constructing Autoencoder..."
 
-    rng = numpy.random.RandomState(1234)
+    rng = numpy.random.RandomState(SEED)
     
     index = T.lscalar()
     x = T.matrix('x') # data matrix
@@ -183,18 +277,19 @@ if __name__ == '__main__':
                      100,
                      rng,
                      tied=True,
-                     ae_type="denoising",
-                     type_params=[],
+                     ae_type="restrictive",
+                     type_params=[ALPHA, 1],
                      activation="sigmoid",
                      cost="entropy"
                  )
 
-    cost = ae.cost_function()
+    cost = ae.cost_function(True)
+    cost_validtest = ae.cost_function(False)
 
     # function that returns error on validation set
     test_error = theano.function(
         inputs=[],
-        outputs=cost,
+        outputs=cost_validtest,
         givens={
             x: test_x
         }
@@ -203,7 +298,7 @@ if __name__ == '__main__':
     # function that returns error on test set
     validation_error = theano.function(
         inputs=[],
-        outputs=cost,
+        outputs=cost_validtest,
         givens={
             x: valid_x
         }
@@ -247,6 +342,7 @@ if __name__ == '__main__':
 
     print "Final test cost: " + str(test_error())
             
-    W = np.transpose(ae.W[0].get_value(borrow=False))
+    #W = np.transpose(ae.W[0].get_value(borrow=False))
+    W = np.transpose(ae.W[0].eval())
 
     viz.visualize_weights(W, 28, 10, 10, 20, 50)

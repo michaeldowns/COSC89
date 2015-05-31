@@ -45,6 +45,7 @@ def load_data(display_image = -1, use_shared = True):
         train_set, valid_set, test_set = cPickle.load(f)
         f.close()
 
+
         if display_image > -1 and display_image < 784:
             x = train_set[0][display_image]
             x = numpy.reshape(x, (28, 28))
