@@ -20,7 +20,7 @@ import visualization as viz
 ######################
 # NETWORK PARAMETERS #
 ######################
-MODEL = [784, 100, 50, 10]
+MODEL = [784, 500, 250, 100, 10]
 ACTIVATION = "sigmoid" # options are "tanh", "softplus", "relu", and "sigmoid"
 BATCH_SIZE = 20
 LEARN_RATE = 0.2
@@ -36,7 +36,7 @@ AE_TIED = True
 AE_TYPE_PARAMS = []
 AE_ACTIVATION = "sigmoid"
 AE_COST = "entropy"
-AUTOENCODER_TYPE = "none"
+AUTOENCODER_TYPE = "normal"
 
 VISUALIZE_WEIGHTS = True
 

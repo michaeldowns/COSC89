@@ -64,6 +64,7 @@ class Autoencoder(object):
         contractive: [contraction_level]
         restrictive: [alpha, which_params]
            which_params is 1, 2, or 3: 1 uses only U, 2 uses only V, 3 uses both
+        sparse: [rho, sparsity]
     activation: The activation function used in the network, one of tanh, 
     sigmoid, softplus, or relu
     cost: one of entropy or quadratic
@@ -95,7 +96,7 @@ class Autoencoder(object):
         
         # initialize the network weights. these will be initialized the same way
         # as long as the type is not restrictive
-        if ae_type in ["normal", "denoising", "contractive"]:
+        if ae_type in ["normal", "denoising", "contractive", "sparse"]:
             # initialize weights connecting layers 1 and 2
             W_12 = initialize_weights(rng, input_dim, hidden_dim, activation)
             self.W.append(W_12)
@@ -236,14 +237,29 @@ class Autoencoder(object):
                 contraction_level = self.type_params[0]
             
             cost += contraction_level * T.mean(J)
-            
+
+        # add sparsity cost if type is sparse
+        if self.ae_type == "sparse":
+            rho = 0.05
+            sparsity = 0.1
+
+            if len(self.type_params) == 2:
+                rho = self.type_params[0]
+                sparsity = self.type_params[1]
+
+
+            rho_hat = T.mean(h, axis=0)
+            KL = rho*T.log(rho/rho_hat) + (1-rho)*T.log((1-rho)/(1-rho_hat))
+
+            cost += sparsity * KL.mean()
+
         
         return cost
             
 
 if __name__ == '__main__':
     BATCH_SIZE = 20
-    LEARN_RATE = 0.5
+    LEARN_RATE = 0.1
     EPOCHS = 15
     ALPHA = 40
     SEED = 1234
@@ -277,8 +293,8 @@ if __name__ == '__main__':
                      100,
                      rng,
                      tied=True,
-                     ae_type="restrictive",
-                     type_params=[ALPHA, 1],
+                     ae_type="sparse",
+                     type_params=[0.01, 0.1],
                      activation="sigmoid",
                      cost="entropy"
                  )
