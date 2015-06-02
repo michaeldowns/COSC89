@@ -46,6 +46,7 @@ class NeuralNetwork(object):
         if autoencoder_type == "none":
             for i in range(len(layers) - 1):
                 bound = np.sqrt(6. / (layers[i] + layers[i+1]))
+
                 W_values = np.asarray(
                     rng.uniform(
                         low=-bound,
@@ -142,7 +143,7 @@ class NeuralNetwork(object):
                         }
                     )
 
-                    print "Pretraining layer 1..."
+                    print "Pretraining weights between layers 1 and 2..."
                     indices = range(n_train_batches)
                     
                     for epoch in range(EPOCHS):
@@ -258,7 +259,7 @@ class NeuralNetwork(object):
                         }
                     )
 
-                    print "Pretraining layer " + str(i+1) + "..."
+                    print "Pretraining weights between layers " + str(i+1) + " and " + str(i+2)
                     indices = range(n_train_batches)
                     
                     for epoch in range(EPOCHS):
@@ -343,7 +344,7 @@ class NeuralNetwork(object):
                         }
                     )
 
-                    print "Pretraining layer " + str(i+1) + "..."
+                    print "Pretraining weights between layers  " + str(i+1) + " and " + str(i+2)
                     indices = range(n_train_batches)
                     
                     for epoch in range(EPOCHS):

@@ -190,7 +190,7 @@ class Autoencoder(object):
             corruption_level = self.type_params[0]
 
         # set up theano rng
-        theano_rng = RandomStreams(rng.randint(2 ** 30))
+        theano_rng = RandomStreams(self.rng.randint(2 ** 30))
 
         # corrupt inputs
         mask = theano_rng.binomial(size=input.shape, n=1,
@@ -230,7 +230,7 @@ class Autoencoder(object):
         # add contractive cost if type is contractive
         if self.ae_type == "contractive":
             J = self.get_jacobian(h, self.W[0])
-            J = T.sum(J ** 2) / 20
+            J = T.sum(J ** 2) / input.shape[0]
 
             contraction_level = 0.1
             if len(self.type_params) > 0:
@@ -287,16 +287,26 @@ if __name__ == '__main__':
     
     index = T.lscalar()
     x = T.matrix('x') # data matrix
+
+    """
+    type_params: The parameters specific to a particular type of autoencoder
+    normal: []
+    denoising: [corruption_level]
+    contractive: [contraction_level]
+    restrictive: [alpha, which_params]
+    which_params is 1, 2, or 3: 1 uses only U, 2 uses only V, 3 uses both
+    sparse: [rho, sparsity]
+    """
     
     ae = Autoencoder(x,
                      784,
                      100,
                      rng,
                      tied=True,
-                     ae_type="sparse",
-                     type_params=[0.01, 0.1],
-                     activation="sigmoid",
-                     cost="entropy"
+                     ae_type="normal",
+                     type_params=[1, 1],
+                     activation="relu",
+                     cost="quadratic"
                  )
 
     cost = ae.cost_function(True)

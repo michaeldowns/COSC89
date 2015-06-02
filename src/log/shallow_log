@@ -1,0 +1,75 @@
+Handling data...
+mnist.pkl.gz already exists...
+mnist.pkl.gz exists, loading into variables...
+Constructing model...
+Training model...
+Validation error at start of epoch 1: 89.39%
+Validation error at start of epoch 2: 3.56%
+Validation error at start of epoch 3: 3.56%
+Validation error at start of epoch 4: 2.87%
+Validation error at start of epoch 5: 2.54%
+Validation error at start of epoch 6: 2.89%
+Validation error at start of epoch 7: 2.24%
+Validation error at start of epoch 8: 2.29%
+Validation error at start of epoch 9: 2.33%
+Validation error at start of epoch 10: 2.31%
+Validation error at start of epoch 11: 2.08%
+Validation error at start of epoch 12: 2.19%
+Validation error at start of epoch 13: 2.01%
+Validation error at start of epoch 14: 2.01%
+Validation error at start of epoch 15: 2.0%
+Validation error at start of epoch 16: 1.96%
+Validation error at start of epoch 17: 2.1%
+Validation error at start of epoch 18: 2.15%
+Validation error at start of epoch 19: 2.08%
+Validation error at start of epoch 20: 1.79%
+Validation error at start of epoch 21: 2.09%
+Validation error at start of epoch 22: 2.0%
+Validation error at start of epoch 23: 2.01%
+Validation error at start of epoch 24: 1.93%
+Validation error at start of epoch 25: 2.08%
+Validation error at start of epoch 26: 2.0%
+Validation error at start of epoch 27: 2.07%
+Validation error at start of epoch 28: 2.04%
+Validation error at start of epoch 29: 2.37%
+Validation error at start of epoch 30: 2.17%
+Validation error at start of epoch 31: 1.93%
+Validation error at start of epoch 32: 2.05%
+Validation error at start of epoch 33: 2.02%
+Validation error at start of epoch 34: 2.27%
+Validation error at start of epoch 35: 2.11%
+Validation error at start of epoch 36: 1.9%
+Validation error at start of epoch 37: 1.99%
+Validation error at start of epoch 38: 2.09%
+Validation error at start of epoch 39: 2.01%
+Validation error at start of epoch 40: 1.95%
+Validation error at start of epoch 41: 2.08%
+Validation error at start of epoch 42: 2.07%
+Validation error at start of epoch 43: 1.89%
+Validation error at start of epoch 44: 2.12%
+Validation error at start of epoch 45: 2.05%
+Validation error at start of epoch 46: 2.0%
+Validation error at start of epoch 47: 2.12%
+Validation error at start of epoch 48: 2.05%
+Validation error at start of epoch 49: 1.89%
+Validation error at start of epoch 50: 2.05%
+Final test set error: 1.91%
+Ran for 1.90863931667 minutes
+Network parameters are...
+MODEL = [784, 100, 10]
+ACTIVATION = relu
+BATCH_SIZE = 20
+LEARN_RATE = 0.2
+EPOCHS = 50
+WEIGHT_DECAY = 0.0001
+MOMENTUM = 0
+SEED = 1234
+AE_BATCH_SIZE = 20
+AE_LEARN_RATE = 0.1
+AE_EPOCHS = 15
+AE_TIED = True
+AE_TYPE_PARAMS = []
+AE_ACTIVATION = sigmoid
+AE_COST = entropy
+AUTOENCODER_TYPE = none
+Plotting validation errors...

@@ -17,6 +17,8 @@ import neuralnet
 
 import visualization as viz
 
+import matplotlib.pyplot as plt
+
 ######################
 # NETWORK PARAMETERS #
 ######################
@@ -33,12 +35,12 @@ AE_BATCH_SIZE = 20
 AE_LEARN_RATE = 0.1
 AE_EPOCHS = 15
 AE_TIED = True
-AE_TYPE_PARAMS = []
+AE_TYPE_PARAMS = [1, 1]
 AE_ACTIVATION = "sigmoid"
 AE_COST = "entropy"
-AUTOENCODER_TYPE = "normal"
+AUTOENCODER_TYPE = "restrictive"
 
-VISUALIZE_WEIGHTS = True
+VISUALIZE_WEIGHTS = False
 
 ANIMATE_WEIGHTS = True
 IMAGE_DIM = 28
@@ -160,9 +162,12 @@ indices = range(n_train_batches)
 frames = []
 fig = plt.figure()
 diff = 0
+validerrs = []
 for epoch in range(EPOCHS):
     print "Validation error at start of epoch " + str(epoch+1) + ":",
-    print str(validate_model()*100) + "%"
+    ve = validate_model()
+    validerrs.append(ve)
+    print str(ve*100) + "%"
     
     # shuffle the indices
     rng.shuffle(indices)
@@ -183,6 +188,34 @@ print "Final test set error:",
 print str(test_model()*100) + "%"
 
 print "Ran for " + str((end_time - start_time)/60) + " minutes"
+
+print "Network parameters are..."
+
+print "MODEL = " + str(MODEL)
+print "ACTIVATION = " + str(ACTIVATION)
+print "BATCH_SIZE = " + str(BATCH_SIZE)
+print "LEARN_RATE = " + str(LEARN_RATE)
+print "EPOCHS = " + str(EPOCHS)
+print "WEIGHT_DECAY = " + str(WEIGHT_DECAY)
+print "MOMENTUM = " + str(MOMENTUM)
+print "SEED = " + str(SEED)
+
+print "AE_BATCH_SIZE = " + str(AE_BATCH_SIZE)
+print "AE_LEARN_RATE = " + str(AE_LEARN_RATE)
+print "AE_EPOCHS = " + str(AE_EPOCHS)
+print "AE_TIED = " + str(AE_TIED)
+print "AE_TYPE_PARAMS = " + str(AE_TYPE_PARAMS)
+print "AE_ACTIVATION = " + str(AE_ACTIVATION)
+print "AE_COST = " + str(AE_COST)
+print "AUTOENCODER_TYPE = " + str(AUTOENCODER_TYPE)
+
+if not VISUALIZE_WEIGHTS:
+    print "Plotting validation errors..."
+    plt.plot(validerrs, linewidth = 2.0, color = 'r')
+    plt.ylabel('Validation Set Errors')
+    plt.xlabel('Epoch')
+    plt.ylim(0,.1)
+    plt.show()
 
 #####################
 # VISUALIZE RESULTS #

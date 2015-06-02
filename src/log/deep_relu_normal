@@ -1,0 +1,143 @@
+Handling data...
+mnist.pkl.gz already exists...
+mnist.pkl.gz exists, loading into variables...
+Constructing model...
+Pretraining weights between layers 1 and 2...
+Validation cost at start of epoch 1: 0.0689110458072
+Validation cost at start of epoch 2: 0.0126682407805
+Validation cost at start of epoch 3: 0.00889707732549
+Validation cost at start of epoch 4: 0.00724067974635
+Validation cost at start of epoch 5: 0.00624863898887
+Validation cost at start of epoch 6: 0.00557479109111
+Validation cost at start of epoch 7: 0.00507683299463
+Validation cost at start of epoch 8: 0.00468871793568
+Validation cost at start of epoch 9: 0.0043756658303
+Validation cost at start of epoch 10: 0.0041216813377
+Validation cost at start of epoch 11: 0.00389516814173
+Validation cost at start of epoch 12: 0.00371078319743
+Validation cost at start of epoch 13: 0.00353633727668
+Validation cost at start of epoch 14: 0.00338756123638
+Validation cost at start of epoch 15: 0.00325327918375
+Final test cost: 0.00310970633854
+Pretraining weights between layers  2 and 3
+Validation cost at start of epoch 1: 0.119150195335
+Validation cost at start of epoch 2: 0.0320111267501
+Validation cost at start of epoch 3: 0.021964797756
+Validation cost at start of epoch 4: 0.0175102201802
+Validation cost at start of epoch 5: 0.0148724797002
+Validation cost at start of epoch 6: 0.0130682220393
+Validation cost at start of epoch 7: 0.0117503416846
+Validation cost at start of epoch 8: 0.010728131897
+Validation cost at start of epoch 9: 0.00991340641957
+Validation cost at start of epoch 10: 0.00924277354944
+Validation cost at start of epoch 11: 0.00867618666708
+Validation cost at start of epoch 12: 0.00819548794511
+Validation cost at start of epoch 13: 0.00777740250873
+Validation cost at start of epoch 14: 0.00741242638047
+Validation cost at start of epoch 15: 0.0070866520032
+Final test cost: 0.00675411454175
+Pretraining weights between layers  3 and 4
+Validation cost at start of epoch 1: 0.275359646211
+Validation cost at start of epoch 2: 0.042694289221
+Validation cost at start of epoch 3: 0.0265934738419
+Validation cost at start of epoch 4: 0.0207448285713
+Validation cost at start of epoch 5: 0.0175097972474
+Validation cost at start of epoch 6: 0.0154336373686
+Validation cost at start of epoch 7: 0.0139614678912
+Validation cost at start of epoch 8: 0.0128774670345
+Validation cost at start of epoch 9: 0.0120582095774
+Validation cost at start of epoch 10: 0.011409470831
+Validation cost at start of epoch 11: 0.0108767179318
+Validation cost at start of epoch 12: 0.010438897158
+Validation cost at start of epoch 13: 0.010054825945
+Validation cost at start of epoch 14: 0.00972080711215
+Validation cost at start of epoch 15: 0.00942882724518
+Final test cost: 0.00910162368245
+Pretraining weights between layers 4 and 5
+Validation error at start of epoch 1: 83.16%
+Validation error at start of epoch 2: 8.69%
+Validation error at start of epoch 3: 8.48%
+Validation error at start of epoch 4: 8.22%
+Validation error at start of epoch 5: 8.34%
+Validation error at start of epoch 6: 8.67%
+Validation error at start of epoch 7: 8.17%
+Validation error at start of epoch 8: 7.69%
+Validation error at start of epoch 9: 7.66%
+Validation error at start of epoch 10: 7.87%
+Validation error at start of epoch 11: 7.68%
+Validation error at start of epoch 12: 8.35%
+Validation error at start of epoch 13: 8.1%
+Validation error at start of epoch 14: 7.4%
+Validation error at start of epoch 15: 7.66%
+Final test error: 8.99%
+Training model...
+Validation error at start of epoch 1: 8.23%
+Validation error at start of epoch 2: 4.69%
+Validation error at start of epoch 3: 3.88%
+Validation error at start of epoch 4: 4.04%
+Validation error at start of epoch 5: 3.11%
+Validation error at start of epoch 6: 3.15%
+Validation error at start of epoch 7: 3.54%
+Validation error at start of epoch 8: 2.75%
+Validation error at start of epoch 9: 2.84%
+Validation error at start of epoch 10: 2.79%
+Validation error at start of epoch 11: 2.44%
+Validation error at start of epoch 12: 2.56%
+Validation error at start of epoch 13: 2.37%
+Validation error at start of epoch 14: 2.57%
+Validation error at start of epoch 15: 2.51%
+Validation error at start of epoch 16: 2.63%
+Validation error at start of epoch 17: 2.79%
+Validation error at start of epoch 18: 2.54%
+Validation error at start of epoch 19: 2.58%
+Validation error at start of epoch 20: 2.38%
+Validation error at start of epoch 21: 2.31%
+Validation error at start of epoch 22: 2.26%
+Validation error at start of epoch 23: 2.46%
+Validation error at start of epoch 24: 2.26%
+Validation error at start of epoch 25: 2.86%
+Validation error at start of epoch 26: 2.49%
+Validation error at start of epoch 27: 2.25%
+Validation error at start of epoch 28: 2.48%
+Validation error at start of epoch 29: 2.26%
+Validation error at start of epoch 30: 2.62%
+Validation error at start of epoch 31: 2.69%
+Validation error at start of epoch 32: 2.37%
+Validation error at start of epoch 33: 2.12%
+Validation error at start of epoch 34: 2.27%
+Validation error at start of epoch 35: 1.95%
+Validation error at start of epoch 36: 2.34%
+Validation error at start of epoch 37: 3.07%
+Validation error at start of epoch 38: 2.1%
+Validation error at start of epoch 39: 2.17%
+Validation error at start of epoch 40: 2.0%
+Validation error at start of epoch 41: 2.42%
+Validation error at start of epoch 42: 2.22%
+Validation error at start of epoch 43: 2.17%
+Validation error at start of epoch 44: 2.24%
+Validation error at start of epoch 45: 2.83%
+Validation error at start of epoch 46: 2.09%
+Validation error at start of epoch 47: 2.59%
+Validation error at start of epoch 48: 2.75%
+Validation error at start of epoch 49: 2.09%
+Validation error at start of epoch 50: 2.07%
+Final test set error: 2.9%
+Ran for 12.3009368333 minutes
+Network parameters are...
+MODEL = [784, 500, 250, 100, 10]
+ACTIVATION = relu
+BATCH_SIZE = 20
+LEARN_RATE = 0.2
+EPOCHS = 50
+WEIGHT_DECAY = 0.0001
+MOMENTUM = 0
+SEED = 1234
+AE_BATCH_SIZE = 20
+AE_LEARN_RATE = 0.1
+AE_EPOCHS = 15
+AE_TIED = True
+AE_TYPE_PARAMS = []
+AE_ACTIVATION = relu
+AE_COST = quadratic
+AUTOENCODER_TYPE = normal
+Plotting validation errors...
