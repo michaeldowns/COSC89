@@ -33,12 +33,12 @@ SEED = 1234 # used to initialize weights
 
 AE_BATCH_SIZE = 20
 AE_LEARN_RATE = 0.1
-AE_EPOCHS = 15
+AE_EPOCHS = 100
 AE_TIED = True
-AE_TYPE_PARAMS = [1, 1]
+AE_TYPE_PARAMS = []
 AE_ACTIVATION = "sigmoid"
 AE_COST = "entropy"
-AUTOENCODER_TYPE = "restrictive"
+AUTOENCODER_TYPE = "normal"
 
 VISUALIZE_WEIGHTS = False
 
